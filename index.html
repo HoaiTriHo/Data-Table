@@ -56,34 +56,66 @@
             Table = document.getElementById('table'),
             Add = document.getElementById('add'),
             Update = document.getElementById('upd'),
-            rindex;;
+            rindex, arrName = new Array(), arrAge = new Array();
 
         Add.addEventListener('click', function(){
+            arrName.push(Ten.value);
+            arrAge.push(Tuoi.value);
+            
             var newRow = Table.insertRow(Table.length),
-                cellOrder = newRow.insertCell(0),
+            cellOrder = newRow.insertCell(0),
                 cellName = newRow.insertCell(1),
                 cellAge = newRow.insertCell(2),
                 cellDelete = newRow.insertCell(3),
                 cellEdit = newRow.insertCell(4);
                 stt = Table.rows.length-1;
 
+            for(var i=Table.rows.length-2;i<arrName.length;i++){
+              cellOrder.innerHTML = stt;
+              cellName.innerHTML = arrName[i];
+              cellAge.innerHTML = arrAge[i];
+              cellDelete.innerHTML = '<button type="button" class="btn btn-secondary" onclick="del()">Delete</button>';
+             cellEdit.innerHTML = '<button type="button" class="btn btn-success" onclick="Edit()">Edit</button>';
+            } 
+            loadStore();//ham luu mang vao localStorage
+        });
+        // load lai trang thi goi du lieu tu localStorage len
+        window.onload = function(){
+          var arr = JSON.parse(localStorage.getItem('mangTen'));
+          var arr1 = JSON.parse(localStorage.getItem('mangTuoi'));
+          arrName = arr;
+          arrAge = arr1;
+          for(var i=0;i<arrName.length;i++){
+            var newRow = Table.insertRow(Table.length),
+            cellOrder = newRow.insertCell(0),
+            cellName = newRow.insertCell(1),
+            cellAge = newRow.insertCell(2),
+            cellDelete = newRow.insertCell(3),
+            cellEdit = newRow.insertCell(4);
+            stt = Table.rows.length-1;
+
             cellOrder.innerHTML = stt;
-            cellName.innerHTML = Ten.value;
-            cellAge.innerHTML = Tuoi.value;
+            cellName.innerHTML = arrName[i];
+            cellAge.innerHTML = arrAge[i];
             cellDelete.innerHTML = '<button type="button" class="btn btn-secondary" onclick="del()">Delete</button>';
             cellEdit.innerHTML = '<button type="button" class="btn btn-success" onclick="Edit()">Edit</button>';
-        });
-        function del(){
+          }
+        }
+      
+       function del(){
           var index;
           for(var i=0;i<Table.rows.length;i++){
             Table.rows[i].onclick = function(){
               index = this.rowIndex;
               Table.deleteRow(index);
+              arrName.splice(index-1, 1);
+              arrAge.splice(index-1, 1);
+              loadStore();
               for(var j=index;j<Table.rows.length;j++){
                 Table.rows[j].cells[0].innerHTML = Table.rows[j].rowIndex;
               }
             }
-          }
+          }       
         }
         function Edit(){
           for(var i=0;i<Table.rows.length;i++){
@@ -95,13 +127,17 @@
             }
         }
         Update.onclick = function(){
-            Table.rows[rindex].cells[1].innerHTML=Ten.value;
-            Table.rows[rindex].cells[2].innerHTML = Tuoi.value;
+          Table.rows[rindex].cells[1].innerHTML=Ten.value;
+          Table.rows[rindex].cells[2].innerHTML = Tuoi.value;
+          arrName[rindex-1] = Ten.value;
+          arrAge[rindex-1] = Tuoi.value;
+          loadStore();
+        }
+        function loadStore(){
+          localStorage.setItem('mangTen', JSON.stringify(arrName));
+          localStorage.setItem('mangTuoi', JSON.stringify(arrAge));
         }
     </script>
-    
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="bootstrap/jquery/jquery-3.5.1.min.js"></script>
     <script src="bootstrap/js/bootstrap.js"></script>
   </body>
